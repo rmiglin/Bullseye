@@ -13,8 +13,10 @@ struct ContentView: View {
         VStack {
             Text("Welcome to my first app!")
                 .fontWeight(.semibold)
-                .foregroundColor(Color.orange)
-            Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/) {
+                .foregroundColor(Color.green)
+            Button(action: {
+                print("Button pressed!")
+            }) {
                 Text(/*@START_MENU_TOKEN@*/"Hit Me!"/*@END_MENU_TOKEN@*/)
             }
         }
