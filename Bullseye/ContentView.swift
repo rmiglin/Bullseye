@@ -11,15 +11,24 @@ import SwiftUI
 struct ContentView: View {
     
     @State var alertIsVisible: Bool = false
-    //Remember to delete this later on
-    //@State var whosThereIsVisible: Bool = false
     
     var body: some View {
         VStack {
             VStack {
-                Text("Welcome to my first app!")
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color.green)
+                
+                //Target row
+                HStack {
+                    Text("Put the bullseye as close as you can to:")
+                    Text(/*@START_MENU_TOKEN@*/"100"/*@END_MENU_TOKEN@*/)
+                }
+                
+                //Slider row
+                HStack {
+                    Text("1")
+                    Slider(value: .constant(10))
+                    Text("100")
+                }
+                //Button row
                 Button(action: {
                     print("Button pressed!")
                     self.alertIsVisible = true
@@ -29,24 +38,15 @@ struct ContentView: View {
                 .alert(isPresented: $alertIsVisible){ () -> Alert in
                     return Alert(title: Text("Hello there!"), message: Text("This is my first pop-up"), dismissButton: .default(Text("Awesome!")))
                 }
-                /*Button(action: {
-                    print("Who's there?")
-                    self.whosThereIsVisible = true
-                }) {
-                    Text("Knock Knock!")
-                }
-                .alert(isPresented: $whosThereIsVisible){ () ->
-                    Alert in
-                    return Alert(title: Text("Who's there?"), message: Text("Sam, Sam Brick. Isn't that a funny name?"), dismissButton: .default(Text("hahaha")))
-                }*/
+                
+                //Score row
             }
-
         }
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView().previewLayout(.fixed(width: 896, height: 414))
     }
 }
