@@ -10,9 +10,11 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State var alertIsVisible: Bool = false
-    @State var sliderValue: Double = 50.0
-    @State var target: Int = Int.random(in: 1...100)
+    @State var alertIsVisible = false
+    @State var sliderValue = 50.0
+    @State var target = Int.random(in: 1...100)
+    @State var totalScore = 0
+    @State var round = 1
     
     var body: some View {
         VStack {
@@ -22,14 +24,14 @@ struct ContentView: View {
                 //Target row
                 HStack {
                     Text("Put the bullseye as close as you can to:")
-                    Text("\(self.target)")
+                    Text("\(target)")
                 }
                 Spacer()
                 
                 //Slider row
                 HStack {
                     Text("1")
-                    Slider(value: self.$sliderValue, in: 1...100)
+                    Slider(value: $sliderValue, in: 1...100)
                     Text("100")
                 }
                 Spacer()
@@ -42,22 +44,28 @@ struct ContentView: View {
                     Text(/*@START_MENU_TOKEN@*/"Hit Me!"/*@END_MENU_TOKEN@*/)
                 }
                 .alert(isPresented: $alertIsVisible){ () -> Alert in
-                    var roundedValue: Int = Int(self.sliderValue.rounded())
-                    return Alert(title: Text("Hello there!"), message: Text("The slider's value is \(roundedValue).\n" + "You scored \(self.pointsForCurrentRound()) points this round."), dismissButton: .default(Text("Awesome!")))
+                    //let roundedValue = Int(sliderValue.rounded())
+                    return Alert(title: Text(alertTitle()), message: Text("The slider's value is \(sliderValueRounded()).\n" + "You scored \(pointsForCurrentRound()) points this round."), dismissButton: .default(Text("Awesome!")){
+                        self.totalScore = self.totalScore + self.pointsForCurrentRound()
+                        self.target = Int.random(in:1...100)
+                        self.round = self.round + 1
+                        })
                 }
                 Spacer()
                 
                 //Score row
                 HStack{
-                    Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/) {
+                    Button(action: {
+                        self.reset()
+                    }) {
                         Text("Start over")
                     }
                     Spacer()
                     Text("Score:")
-                    Text("999999")
+                    Text("\(totalScore)")
                     Spacer()
                     Text("Round:")
-                    Text("999")
+                    Text("\(round)")
                     Spacer()
                     Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/) {
                         Text("info")
@@ -68,13 +76,47 @@ struct ContentView: View {
         }
     }
     
+    func sliderValueRounded() -> Int {
+        Int(sliderValue.rounded())
+    }
+    
+    func amountOff() -> Int {
+        abs(target - sliderValueRounded())
+    }
+    
     func pointsForCurrentRound() -> Int {
-        var difference: Int
-        var roundedValue: Int = Int(self.sliderValue.rounded())
-        difference = abs(roundedValue - self.target)
-        var awardedPoints: Int = 100 - difference
-    return awardedPoints
-}
+        let maximumScore = 100
+        let difference = amountOff()
+        let bonus: Int
+        if difference == 0 {
+            bonus = 100
+        } else if difference == 1 {
+            bonus = 50
+        } else {
+            bonus = 0
+        }
+        return maximumScore - difference + bonus
+    }
+    
+    func alertTitle() -> String {
+        let difference = amountOff()
+        let title: String
+        if difference == 0 {
+            title = "Perfect!"
+        } else if difference < 5 {
+            title = "You almost had it!"
+        } else if difference <= 10 {
+            title = "Not bad."
+        } else {
+            title = "Are you even trying?"
+        }
+        return title
+    }
+    
+    func reset(){
+        totalScore = 0
+        round = 1
+    }
 
 
 }
